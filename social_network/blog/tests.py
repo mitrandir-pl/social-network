@@ -6,7 +6,6 @@ class UserTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        print("HELOOOOOOOO!!!!!")
         test_user1 = UserAPI.objects.create_user(
             username="user1", email="a@a.com"
         )
