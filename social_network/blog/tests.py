@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .models import UserAPI, News
+from .models import UserAPI, News, Comments
 
 
 class UserTest(TestCase):
@@ -29,6 +29,18 @@ class UserTest(TestCase):
             content="this is more content!!!"
         )
         test_news2.save()
+        test_comment1 = Comments.objects.create(
+            post=test_news2,
+            author=test_user1,
+            content="dummy comment num 1"
+        )
+        test_comment1.save()
+        test_comment2 = Comments.objects.create(
+            post=test_news1,
+            author=test_user2,
+            content="dummy comment num 2"
+        )
+        test_comment2.save()
 
     def test_user_fields(self):
         user1 = UserAPI.objects.get(id=1)
@@ -59,3 +71,19 @@ class UserTest(TestCase):
         self.assertEqual(content2, "this is more content!!!")
         self.assertEqual(user1, author1)
         self.assertEqual(user2, author2)
+
+    def test_comments(self):
+        news1 = News.objects.get(id=1)
+        news2 = News.objects.get(id=2)
+        user1 = UserAPI.objects.get(id=1)
+        user2 = UserAPI.objects.get(id=2)
+        comment1 = Comments.objects.get(id=1)
+        comment2 = Comments.objects.get(id=2)
+        content1 = f"{comment1.content}"
+        content2 = f"{comment2.content}"
+        self.assertEqual(comment1.author, user1)
+        self.assertEqual(comment2.author, user2)
+        self.assertEqual(comment1.post, news2)
+        self.assertEqual(comment2.post, news1)
+        self.assertEqual(content1, "dummy comment num 1")
+        self.assertEqual(content2, "dummy comment num 2")
