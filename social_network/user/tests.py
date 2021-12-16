@@ -3,6 +3,12 @@ from .models import UserAPI
 
 
 class UserTest(TestCase):
+    """
+    Test case for UserAPI model
+
+    Creating 3 test users
+    Checking if they have required fields: username, email and role
+    """
 
     @classmethod
     def setUpTestData(cls):
