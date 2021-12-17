@@ -1,8 +1,19 @@
 from django.test import TestCase
-from .models import UserAPI, News, Comments
+from user.models import UserAPI
+from .models import News, Comments
 
 
-class UserTest(TestCase):
+class NewsTest(TestCase):
+    """
+    Test case for news model and for comment model
+
+    Creating two users
+    Creating two news (authors are users we created before)
+    Creating two comments (first user comments second news, second user comments first news)
+    Checking if news models have required fields: title, author, content
+    Checking if comments models have required fields: author, content, news_id
+    Checking if all these fields are correct
+    """
 
     @classmethod
     def setUpTestData(cls):
@@ -15,14 +26,12 @@ class UserTest(TestCase):
             username="user2", email="b@b.com"
         )
         test_user2.save()
-
         test_news1 = News.objects.create(
             title="new title1",
             author=test_user1,
             content="this is the content!!!"
         )
         test_news1.save()
-
         test_news2 = News.objects.create(
             title="new title2",
             author=test_user2,
@@ -41,18 +50,6 @@ class UserTest(TestCase):
             content="dummy comment num 2"
         )
         test_comment2.save()
-
-    def test_user_fields(self):
-        user1 = UserAPI.objects.get(id=1)
-        user2 = UserAPI.objects.get(id=2)
-        username1 = f"{user1.username}"
-        username2 = f"{user2.username}"
-        email1 = f"{user1.email}"
-        email2 = f"{user2.email}"
-        self.assertEqual(username1, "user1")
-        self.assertEqual(username2, "user2")
-        self.assertEqual(email1, "a@a.com")
-        self.assertEqual(email2, "b@b.com")
 
     def test_news(self):
         news1 = News.objects.get(id=1)

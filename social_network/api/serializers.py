@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import UserAPI, News, Comments
+from user.models import UserAPI
+from blog.models import News, Comments
 
 
 class UserAPISerializer(serializers.ModelSerializer):
