@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'rest_framework',
     # my apps
     'blog',
+    'user',
+    'api',
 ]
 
 REST_FRAMEWORK = {
@@ -50,7 +52,7 @@ REST_FRAMEWORK = {
 }
 
 
-AUTH_USER_MODEL = 'blog.UserAPI'
+AUTH_USER_MODEL = 'user.UserAPI'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
