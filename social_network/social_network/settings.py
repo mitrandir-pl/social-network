@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     # my apps
     'blog',
     'user',
-    'api',
+    'comments',
 ]
 
 REST_FRAMEWORK = {
