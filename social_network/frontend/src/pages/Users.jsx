@@ -1,6 +1,10 @@
 import React, {Component} from 'react';
+import {Link} from 'react-router-dom';
+import axios from "axios";
+
 
 class Users extends Component {
+
 
     constructor(props) {
         super(props);
@@ -11,14 +15,14 @@ class Users extends Component {
     }
 
     componentDidMount() {
-        fetch('http://127.0.0.1:8000/api/v1/users/')
-            .then(res => res.json())
-            .then(json =>{
+        axios.get('http://127.0.0.1:8000/api/v1/users/')
+            .then(res => {
+                const items = res.data;
                 this.setState({
-                    isLoaded: true,
-                    items: json,
-                })
-            });
+                    items,
+                    isLoaded: true
+                });
+            })
     }
 
     render() {
@@ -32,7 +36,10 @@ class Users extends Component {
                     <ul>
                         {items.map(item => (
                             <li key={item.id}>
-                                Name: {item.username} | Email: {item.email}
+                                <ul>
+                                    <li>Name: <Link to={`/users/${item.id}`}>{item.username}</Link></li>
+                                    <li>Email: {item.email}</li>
+                                </ul>
                             </li>
                         ))}
                     </ul>

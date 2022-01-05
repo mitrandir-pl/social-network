@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
+import axios from "axios";
 
-class News extends Component {
+class Comments extends Component {
 
     constructor(props) {
         super(props);
@@ -11,14 +12,14 @@ class News extends Component {
     }
 
     componentDidMount() {
-        fetch('http://127.0.0.1:8000/api/v1/news/')
-            .then(res => res.json())
-            .then(json =>{
+        axios.get('http://127.0.0.1:8000/api/v1/comments/')
+            .then(res => {
+                const items = res.data;
                 this.setState({
-                    isLoaded: true,
-                    items: json,
-                })
-            });
+                    items,
+                    isLoaded: true
+                });
+            })
     }
 
     render() {
@@ -32,10 +33,11 @@ class News extends Component {
                     <ul>
                         {items.map(item => (
                             <li key={item.id}>
-                                Title: {item.title}
-                                Author: {item.author}
-                                Created: {item.created}
-                                Content: {item.content}
+                                <ul>
+                                    <li>Title: {item.post}</li>
+                                    <li>Author: {item.author}</li>
+                                    <li>Content: {item.content}</li>
+                                </ul>
                             </li>
                         ))}
                     </ul>
@@ -45,4 +47,4 @@ class News extends Component {
     }
 }
 
-export default News;
+export default Comments;
