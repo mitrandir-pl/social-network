@@ -1,14 +1,32 @@
-import React from 'react';
-import {useParams} from "react-router-dom";
+import React, {useState, useEffect} from 'react';
+import {Link, useParams} from "react-router-dom";
+import axios from "axios";
 
 function User() {
-    const params = useParams()
-    console.log(params)
+
+    const [user, setUser] = useState(null);
+    const params = useParams();
+
+    useEffect(() => {
+        const apiUrl = `http://127.0.0.1:8000/api/v1/users/${params.userId}`;
+        axios.get(apiUrl).then((response) => {
+            setUser(response.data);
+        });
+    }, []);
+
+    if (!user) return <h1>Loading...</h1>;
+
     return (
         <div>
-            <h1>Hello</h1>
+            <button><Link to="/users">Go back</Link></button>
+            <ul>
+                <li>Username: {user.username}</li>
+                <li>Email: {user.email}</li>
+                <li>Role: {user.role}</li>
+            </ul>
         </div>
     );
 }
+
 
 export default User

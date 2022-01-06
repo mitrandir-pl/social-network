@@ -37,8 +37,7 @@ class Users extends Component {
                         {items.map(item => (
                             <li key={item.id}>
                                 <ul>
-                                    <li>Name: <Link to={`/users/${item.id}`}>{item.username}</Link></li>
-                                    <li>Email: {item.email}</li>
+                                    <li>Username: <Link to={`/users/${item.id}`}>{item.username}</Link></li>
                                 </ul>
                             </li>
                         ))}

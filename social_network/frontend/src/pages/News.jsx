@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import {Link} from 'react-router-dom';
 
 class News extends Component {
 
@@ -20,14 +21,6 @@ class News extends Component {
                     isLoaded: true
                 });
             })
-        // fetch('http://127.0.0.1:8000/api/v1/news/')
-        //     .then(res => res.json())
-        //     .then(json =>{
-        //         this.setState({
-        //             isLoaded: true,
-        //             items: json,
-        //         })
-        //     });
     }
 
     render() {
@@ -42,10 +35,8 @@ class News extends Component {
                         {items.map(item => (
                             <li key={item.id}>
                                 <ul>
-                                    <li>Title: {item.title}</li>
+                                    <li>Title: <Link to={`/news/${item.id}`}> {item.title} </Link></li>
                                     <li>Author: {item.author}</li>
-                                    <li>Created: {item.created}</li>
-                                    <li>Content: {item.content}</li>
                                 </ul>
                             </li>
                         ))}
