@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
-import axios from "axios";
+import api from "../components/Axios";
 
 
 class Users extends Component {
@@ -15,13 +15,18 @@ class Users extends Component {
     }
 
     componentDidMount() {
-        axios.get('http://127.0.0.1:8000/api/v1/users/')
+        api.get('http://127.0.0.1:8000/api/v1/users/')
             .then(res => {
-                const items = res.data;
-                this.setState({
-                    items,
-                    isLoaded: true
-                });
+                console.log(res);
+                // if (res.statusCode === 401) {
+                //     console.log("mistake")
+                // } else {
+                    const items = res.data;
+                    this.setState({
+                        items,
+                        isLoaded: true
+                    });
+                // }
             })
     }
 

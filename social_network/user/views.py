@@ -1,7 +1,7 @@
 import datetime
 
 import jwt
-from rest_framework import generics, status
+from rest_framework import generics, status, permissions
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -21,6 +21,8 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class RegisterView(APIView):
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = ()
 
     def post(self, request):
         serializer = UserAPISerializer(data=request.data)
