@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import axios from 'axios';
+import api from "../components/Axios";
 import {Link} from 'react-router-dom';
 
 class News extends Component {
@@ -13,7 +13,7 @@ class News extends Component {
     }
 
     componentDidMount() {
-        axios.get('http://127.0.0.1:8000/api/v1/news/')
+        api.get('http://127.0.0.1:8000/api/v1/news/')
             .then(res => {
                 const items = res.data;
                 this.setState({

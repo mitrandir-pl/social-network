@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import axios from "axios";
+import api from "../components/Axios";
 
 class Comments extends Component {
 
@@ -12,7 +12,7 @@ class Comments extends Component {
     }
 
     componentDidMount() {
-        axios.get('http://127.0.0.1:8000/api/v1/comments/')
+        api.get('http://127.0.0.1:8000/api/v1/comments/')
             .then(res => {
                 const items = res.data;
                 this.setState({

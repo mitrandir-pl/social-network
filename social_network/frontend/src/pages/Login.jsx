@@ -1,4 +1,7 @@
 import React, { Component } from "react";
+import axios from "axios";
+import api from "../components/Axios";
+import "../CSS/login.css";
 
 class Login extends Component {
     constructor(props) {
@@ -14,27 +17,33 @@ class Login extends Component {
     }
 
     handleSubmit(event) {
-        alert('A username and password was submitted: ' + this.state.username + " " + this.state.password);
         event.preventDefault();
+        axios.post("http://127.0.0.1:8000/api/token/", {
+            username: this.state.username, password: this.state.password
+        })
+            .then(response => {
+                if (response.status === 200) {
+                    api.defaults.headers['Authorization'] = "JWT " + response.data.access;
+                    localStorage.setItem('access_token', response.data.access);
+                    localStorage.setItem('refresh_token', response.data.refresh);
+                } else {
+                    console.log('Something went wrong!');
+                }
+            });
     }
 
     render() {
         return (
-            <div>Login
+            <div className="container">
                 <form onSubmit={this.handleSubmit}>
-                    <label>
-                        Username:
-                        <input name="username" type="text" value={this.state.username} onChange={this.handleChange}/>
-                    </label>
-                    <label>
-                        Password:
-                        <input name="password" type="password" value={this.state.password} onChange={this.handleChange}/>
-                    </label>
+                    <div className="input-block">
+                        <input name="username" placeholder="Enter username" type="text" value={this.state.username} onChange={this.handleChange}/>
+                        <input name="password" placeholder="Enter password" type="password" value={this.state.password} onChange={this.handleChange}/>
+                    </div>
                     <input type="submit" value="Submit"/>
                 </form>
             </div>
         )
     }
 }
-
 export default Login;

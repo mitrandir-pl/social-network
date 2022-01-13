@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {Link, useParams} from "react-router-dom";
-import axios from "axios";
+import api from "../components/Axios";
 
 function User() {
 
@@ -9,7 +9,7 @@ function User() {
 
     useEffect(() => {
         const apiUrl = `http://127.0.0.1:8000/api/v1/users/${params.userId}`;
-        axios.get(apiUrl).then((response) => {
+        api.get(apiUrl).then((response) => {
             setUser(response.data);
         });
     }, []);

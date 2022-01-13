@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {Link, useParams} from "react-router-dom";
-import axios from "axios";
+import api from "../components/Axios";
 
 function Item() {
 
@@ -9,7 +9,7 @@ function Item() {
 
     useEffect(() => {
         const apiUrl = `http://127.0.0.1:8000/api/v1/news/${params.newsId}`;
-        axios.get(apiUrl).then((response) => {
+        api.get(apiUrl).then((response) => {
             setItem(response.data);
         });
     }, []);
