@@ -19,7 +19,6 @@ api.interceptors.response.use(
         const originalRequest = error.config;
         if (error.response.status === 401 && error.response.statusText === "Unauthorized") {
             const refresh_token = localStorage.getItem('refresh_token');
-            console.log(refresh_token);
             return api
                 .post('/token/refresh/', {refresh: refresh_token})
                 .then((response) => {
@@ -35,7 +34,6 @@ api.interceptors.response.use(
                     console.log(err)
                 });
         }
-        console.log(":D");
         return Promise.reject(error);
     }
 );

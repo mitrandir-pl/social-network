@@ -17,16 +17,11 @@ class Users extends Component {
     componentDidMount() {
         api.get('http://127.0.0.1:8000/api/v1/users/')
             .then(res => {
-                console.log(res);
-                // if (res.statusCode === 401) {
-                //     console.log("mistake")
-                // } else {
                     const items = res.data;
                     this.setState({
                         items,
                         isLoaded: true
                     });
-                // }
             })
     }
 

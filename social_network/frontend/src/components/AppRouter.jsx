@@ -7,6 +7,8 @@ import Login from "../pages/Login";
 import Header from "./Header";
 import User from "../pages/User";
 import Item from "../pages/Item";
+import HomePage from "../pages/HomePage";
+import CreateNews from "../pages/CreateNews";
 
 const AppRouter = () => {
     return (
@@ -18,6 +20,8 @@ const AppRouter = () => {
                 <Route path={"/news"} element={<News />} />
                 <Route path={"/news/:newsId"} element={<Item />} />
                 <Route path={"/comments"} element={<Comments />} />
+                <Route path={"/home"} element={<HomePage name={"Steve"}/>} />
+                <Route path={"/create"} element={<CreateNews />} />
                 <Route path={"/signup"} element={<Signup />} />
                 <Route path={"/login"} element={<Login />} />
             </Routes>

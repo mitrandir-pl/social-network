@@ -18,14 +18,17 @@ class Login extends Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        axios.post("http://127.0.0.1:8000/api/token/", {
-            username: this.state.username, password: this.state.password
+        const apiUrl = "http://127.0.0.1:8000/api/token/";
+        axios.post(apiUrl, {
+            username: this.state.username,
+            password: this.state.password
         })
             .then(response => {
                 if (response.status === 200) {
                     api.defaults.headers['Authorization'] = "JWT " + response.data.access;
                     localStorage.setItem('access_token', response.data.access);
                     localStorage.setItem('refresh_token', response.data.refresh);
+                    localStorage.setItem('username', this.state.username);
                 } else {
                     console.log('Something went wrong!');
                 }
