@@ -4,22 +4,29 @@ import api from "../components/Axios";
 function CreateNews() {
 
     const username = localStorage.getItem('username');
-    const [news, setNews] = useState(null);
+    const [title, setTitle] = useState('');
+    const [content, setContent] = useState('');
 
-    useEffect(() => {
+    const addNewPost = () => {
         const apiUrl = 'http://127.0.0.1:8000/api/v1/news/create/';
         api.post(apiUrl, {
-            author: username})
-            .then((response) => {
-                setNews(response.data);
-            });
-    }, []);
+            author: username,
+            title: title,
+            content: content
+        })
+    };
 
     return (
         <div>
-            Hello
+            <input name="title" placeholder="Enter title"
+               type="text" value={title}
+                   onChange={event => setTitle(event.target.value)} />
+            <input name="content" placeholder="Enter content"
+                   type="text" value={content}
+                   onChange={event => setContent(event.target.value)} />
+            <button onClick={addNewPost}>Post</button>
         </div>
     );
-};
+}
 
 export default CreateNews;

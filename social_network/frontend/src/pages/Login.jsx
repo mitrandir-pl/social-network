@@ -40,8 +40,12 @@ class Login extends Component {
             <div className="container">
                 <form onSubmit={this.handleSubmit}>
                     <div className="input-block">
-                        <input name="username" placeholder="Enter username" type="text" value={this.state.username} onChange={this.handleChange}/>
-                        <input name="password" placeholder="Enter password" type="password" value={this.state.password} onChange={this.handleChange}/>
+                        <input name="username" placeholder="Enter username"
+                               type="text" value={this.state.username}
+                               onChange={this.handleChange} />
+                        <input name="password" placeholder="Enter password"
+                               type="password" value={this.state.password}
+                               onChange={this.handleChange} />
                     </div>
                     <input type="submit" value="Submit"/>
                 </form>

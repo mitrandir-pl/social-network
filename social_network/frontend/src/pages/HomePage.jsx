@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import api from "../components/Axios"
 import {Link} from "react-router-dom";
-import CreateNews from "./CreateNews";
+import "../CSS/header.css";
 
 function HomePage(){
 
@@ -20,11 +20,14 @@ function HomePage(){
 
     return (
         <div>
-            <CreateNews />
+            <Link to="/create" className="button1">Create post</Link>
             {news.map(item => (
                 <li key={item.id}>
                     <ul>
-                        <li>Title: <Link to={`/news/${item.id}`}> {item.title} </Link></li>
+                        <li>Title: <Link
+                            to={`/news/${item.id}`}
+                            state={{name: item.title}}
+                        > {item.title} </Link></li>
                         <li>Author: {item.author}</li>
                         <li>Created: {item.created}</li>
                     </ul>

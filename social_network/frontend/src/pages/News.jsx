@@ -35,7 +35,11 @@ class News extends Component {
                         {items.map(item => (
                             <li key={item.id}>
                                 <ul>
-                                    <li>Title: <Link to={`/news/${item.id}`}> {item.title} </Link></li>
+                                    <li>Title: <Link
+                                        to={`/news/${item.id}`}
+                                        state={{name: item.title}}
+                                    > {item.title} </Link>
+                                    </li>
                                     <li>Author: {item.author}</li>
                                 </ul>
                             </li>
