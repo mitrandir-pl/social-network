@@ -57,7 +57,6 @@ function Item() {
                     </li>
                 ))}
             </ul>
-            <h1>{comment}</h1>
             <input name="comment" placeholder="Enter comment"
                    type="text" value={comment}
                    onChange={event => setComment(event.target.value)} />

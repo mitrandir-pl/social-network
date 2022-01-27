@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import "../CSS/login.css";
+import api from "../components/Axios";
 
 class Signup extends Component{
     constructor(props){
@@ -19,8 +20,18 @@ class Signup extends Component{
     }
 
     handleSubmit(event) {
-        alert('A username and password was submitted: ' + this.state.username + " " + this.state.password + " " + this.state.email);
         event.preventDefault();
+        const apiUrl = "http://127.0.0.1:8000/api/v1/users/registration";
+        api.post(apiUrl, {
+            username: this.state.username,
+            email: this.state.email,
+            password: this.state.password,
+        })
+            .then(response => {
+                response.status === 201
+                    ? alert("User successfully registered")
+                    : alert('Something went wrong!')
+            });
     }
 
     render() {

@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import axios from "axios";
 import api from "../components/Axios";
 import "../CSS/login.css";
 
@@ -19,7 +18,7 @@ class Login extends Component {
     handleSubmit(event) {
         event.preventDefault();
         const apiUrl = "http://127.0.0.1:8000/api/token/";
-        axios.post(apiUrl, {
+        api.post(apiUrl, {
             username: this.state.username,
             password: this.state.password
         })
