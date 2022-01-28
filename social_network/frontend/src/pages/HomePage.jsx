@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import api from "../components/Axios"
 import {Link} from "react-router-dom";
-import "../CSS/header.css";
 
 function HomePage(){
 

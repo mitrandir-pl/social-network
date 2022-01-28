@@ -29,10 +29,6 @@ function Item() {
         });
     };
 
-    const loc = () => {
-        console.log(location.state);
-    }
-
     if (!item) return <h1>Loading...</h1>;
 
     return (

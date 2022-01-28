@@ -1,31 +1,20 @@
-import React, { Component } from "react";
+import React, {useState} from "react";
+import axios from "axios";
 import "../CSS/login.css";
-import api from "../components/Axios";
 
-class Signup extends Component{
-    constructor(props){
-        super(props);
-        this.state = {
-            username: "",
-            password: "",
-            email:""
-        };
+function Signup() {
 
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
+    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
-    handleChange(event) {
-        this.setState({[event.target.name]: event.target.value});
-    }
-
-    handleSubmit(event) {
+    const submit = (event) => {
         event.preventDefault();
         const apiUrl = "http://127.0.0.1:8000/api/v1/users/registration";
-        api.post(apiUrl, {
-            username: this.state.username,
-            email: this.state.email,
-            password: this.state.password,
+        axios.post(apiUrl, {
+            username: username,
+            email: email,
+            password: password,
         })
             .then(response => {
                 response.status === 201
@@ -34,20 +23,24 @@ class Signup extends Component{
             });
     }
 
-    render() {
-        return (
-            <div className="container">
-                <form onSubmit={this.handleSubmit}>
-                    <input name="username" placeholder="Enter username" type="text" value={this.state.username} onChange={this.handleChange}/>
-                    <br/>
-                    <input name="email" placeholder="Enter email" type="email" value={this.state.email} onChange={this.handleChange}/>
-                    <br/>
-                    <input name="password" placeholder="Enter password" type="password" value={this.state.password} onChange={this.handleChange}/>
-                    <br/>
-                    <input type="submit" value="Submit"/>
-                </form>
-            </div>
-        )
-    }
+    return (
+      <div className="container">
+          <form onSubmit={submit}>
+              <div className="input-block">
+                  <input name="username" placeholder="Enter username"
+                         type="text" value={username}
+                         onChange={event => setUsername(event.target.value)} />
+                  <input name="email" placeholder="Enter email"
+                         type="text" value={email}
+                         onChange={event => setEmail(event.target.value)} />
+                  <input name="password" placeholder="Enter password"
+                         type="password" value={password}
+                         onChange={event => setPassword(event.target.value)} />
+              </div>
+              <input type="submit" value="Submit" />
+          </form>
+      </div>
+    )
 }
+
 export default Signup;

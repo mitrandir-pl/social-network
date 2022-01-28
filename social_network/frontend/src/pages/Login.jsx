@@ -1,55 +1,50 @@
-import React, { Component } from "react";
+import React, {useState} from "react";
+import {useNavigate} from "react-router-dom";
 import api from "../components/Axios";
+import axios from "axios";
 import "../CSS/login.css";
 
-class Login extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {username: "", password: ""};
+function Login() {
 
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const navigate = useNavigate();
 
-    handleChange(event) {
-        this.setState({[event.target.name]: event.target.value});
-    }
-
-    handleSubmit(event) {
+    const submit = (event) => {
         event.preventDefault();
         const apiUrl = "http://127.0.0.1:8000/api/token/";
-        api.post(apiUrl, {
-            username: this.state.username,
-            password: this.state.password
+        axios.post(apiUrl, {
+            username: username,
+            password: password
         })
             .then(response => {
                 if (response.status === 200) {
                     api.defaults.headers['Authorization'] = "JWT " + response.data.access;
                     localStorage.setItem('access_token', response.data.access);
                     localStorage.setItem('refresh_token', response.data.refresh);
-                    localStorage.setItem('username', this.state.username);
+                    localStorage.setItem('username', username);
+                    navigate("/news");
                 } else {
                     console.log('Something went wrong!');
                 }
             });
     }
 
-    render() {
-        return (
-            <div className="container">
-                <form onSubmit={this.handleSubmit}>
-                    <div className="input-block">
-                        <input name="username" placeholder="Enter username"
-                               type="text" value={this.state.username}
-                               onChange={this.handleChange} />
-                        <input name="password" placeholder="Enter password"
-                               type="password" value={this.state.password}
-                               onChange={this.handleChange} />
-                    </div>
-                    <input type="submit" value="Submit"/>
-                </form>
+    return (
+        <div className="container">
+        <form onSubmit={submit}>
+            <div className="input-block">
+                <input name="username" placeholder="Enter username"
+                    type="text" value={username}
+                    onChange={event => setUsername(event.target.value)} />
+                <input name="password" placeholder="Enter password"
+                    type="password" value={password}
+                    onChange={event => setPassword(event.target.value)} />
             </div>
+            <input type="submit" value="Submit" />
+            </form>
+        </div>
         )
-    }
 }
+
 export default Login;
