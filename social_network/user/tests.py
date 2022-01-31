@@ -111,7 +111,7 @@ class UserTests(APITestCase, UserFixtures):
             "username": self.user['username'],
             "password": self.user['password'],
         })
-        self.assertEqual()
+        self.assertEqual({'access', 'refresh'}, res.json().keys())
 
     def test_user_logout(self):
         """
