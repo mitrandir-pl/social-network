@@ -6,7 +6,6 @@ User listing
 Getting info on a specific user
 Login/logout functionality
 """
-import username as username
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
@@ -17,7 +16,7 @@ from rest_framework.test import APITestCase
 from .models import UserAPI
 
 
-class UserTests(APITestCase):
+class UserFixtures:
     def setup_user_list(self):
         self.users = [
             {
@@ -39,6 +38,16 @@ class UserTests(APITestCase):
         for user in self.users:
             UserAPI.objects.create_user(**user).save()
 
+    def setup_user_login(self):
+        self.user = {
+            "username": "rms",
+            "email": "rms@gnu.org",
+            "password": "qwerty12345"
+        }
+        UserAPI.objects.create_user(**self.user).save()
+
+
+class UserTests(APITestCase, UserFixtures):
     def test_list_users(self):
         """
         Send a request to get a usr list
@@ -53,7 +62,8 @@ class UserTests(APITestCase):
         self.assertTrue(all(user.get('id') for user in users))
 
         # User list reflects DB table
-        for user in users: user.pop('id')
+        for user in users:
+            user.pop('id')
         self.assertEqual(users, res.json())
 
     def test_register_user(self):
@@ -78,50 +88,35 @@ class UserTests(APITestCase):
         user.pop('password')
         self.assertDictEqual(user, new_user)
 
+    def test_get_user(self):
+        """
+        Get info on user by its ID
+        """
+        self.setup_user_list()
+        url = reverse('get_user', kwargs={'pk': 1})
+        # self.setup_current_user()
+        res = self.client.get(url)
+        user = res.json()
+
+        breakpoint()
+
+    def test_user_login(self):
+        """
+        Given an existing user account
+        Expect to receive JWT token on a successful login
+        """
+        self.setup_user_login()
+        url = reverse('token_obtain_pair')
+        res = self.client.post(url, {
+            "username": self.user['username'],
+            "password": self.user['password'],
+        })
+        self.assertEqual()
 
 
-class UserTest(TestCase):
-    """
-    Test case for UserAPI model
-
-    Creating 3 test users
-    Checking if they have required fields: username, email and role
-    """
-
-    @classmethod
-    def setUpTestData(cls):
-        test_user1 = UserAPI.objects.create_user(
-            username="Paul", email="a@a.com", role="user"
-        )
-        test_user1.save()
-        test_user2 = UserAPI.objects.create_user(
-            username="Alex", email="b@b.com", role="user"
-        )
-        test_user2.save()
-        test_user3 = UserAPI.objects.create_user(
-            username="Steve", email="c@c.com", role="user"
-        )
-        test_user3.save()
-
-    def test_user_fields(self):
-        user1 = UserAPI.objects.get(id=1)
-        user2 = UserAPI.objects.get(id=2)
-        user3 = UserAPI.objects.get(id=3)
-        username1 = f"{user1.username}"
-        username2 = f"{user2.username}"
-        username3 = f"{user3.username}"
-        email1 = f"{user1.email}"
-        email2 = f"{user2.email}"
-        email3 = f"{user3.email}"
-        role1 = f"{user1.role}"
-        role2 = f"{user2.role}"
-        role3 = f"{user3.role}"
-        self.assertEqual(username1, "Paul")
-        self.assertEqual(username2, "Alex")
-        self.assertEqual(username3, "Steve")
-        self.assertEqual(email1, "a@a.com")
-        self.assertEqual(email2, "b@b.com")
-        self.assertEqual(email3, "c@c.com")
-        self.assertEqual(role1, "user")
-        self.assertEqual(role2, "user")
-        self.assertEqual(role3, "user")
+    def test_user_logout(self):
+        """
+        Given an exiting token that allows you
+        to make requests on behalf of a particular user,
+        Expect the token to be made expired on logout request
+        """
