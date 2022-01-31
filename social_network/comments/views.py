@@ -26,7 +26,7 @@ class CreateComment(APIView):
 class CommentsForCurrentPost(APIView):
 
     def post(self, request):
-        post_ = request.data['post']
+        post_ = request.data.get('post')
         current_comments = Comments.objects.filter(post=post_)
         serializer = CommentsSerializer(current_comments, many=True)
         return Response(serializer.data)

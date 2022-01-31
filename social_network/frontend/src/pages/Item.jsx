@@ -10,7 +10,7 @@ function Item() {
     const [comments, setComments] = useState([]);
     const params = useParams();
     const location = useLocation();
-    const post_name = location.state.name;
+    const post_name = location.name;
 
     useEffect(() => {
         const apiUrl = 'http://127.0.0.1:8000/api/v1/';
@@ -36,6 +36,7 @@ function Item() {
             <button><Link to="/news">Go back</Link></button>
             <ul>
                 <li>Title: {item.title}</li>
+                <li>Image: <img src={item.image} alt="" /></li>
                 <li>Author: {item.author}</li>
                 <li>Created: {item.created}</li>
                 <li>Content: {item.content}</li>

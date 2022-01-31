@@ -4,6 +4,7 @@ from user.models import UserAPI
 
 class News(models.Model):
     title = models.CharField(max_length=200, unique=True)
+    image = models.ImageField(blank=True, null=True)
     author = models.ForeignKey(UserAPI, on_delete=models.CASCADE, to_field='username')
     created = models.DateTimeField(auto_now_add=True)
     content = models.TextField()

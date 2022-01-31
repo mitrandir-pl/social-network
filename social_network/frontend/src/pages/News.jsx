@@ -1,6 +1,7 @@
-import React, {Component} from 'react';
+import React, {Component} from "react";
 import api from "../components/Axios";
-import {Link} from 'react-router-dom';
+import {Link} from "react-router-dom";
+import ShowPost from "../components/ShowPost";
 
 class News extends Component {
 
@@ -31,20 +32,11 @@ class News extends Component {
         else {
             return (
                 <div>
-                    <ul>
                         {items.map(item => (
-                            <li key={item.id}>
-                                <ul>
-                                    <li>Title: <Link
-                                        to={`/news/${item.id}`}
-                                        state={{name: item.title}}
-                                    > {item.title} </Link>
-                                    </li>
-                                    <li>Author: {item.author}</li>
-                                </ul>
-                            </li>
+                            <div key={item.id}>
+                                <ShowPost post={item} />
+                            </div>
                         ))}
-                    </ul>
                 </div>
             )
         }
