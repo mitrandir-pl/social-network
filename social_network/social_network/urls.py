@@ -7,7 +7,7 @@ from rest_framework_simplejwt.views import (
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/users/', include('user.urls')),
+    path('api/v1/users/', include('user.urls'), name="user"),
     path('api/v1/news/', include('blog.urls')),
     path('api/v1/comments/', include('comments.urls')),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
