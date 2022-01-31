@@ -1,5 +1,57 @@
+"""
+Let's interact with the users.
+Allows for user creation (registration)
+User listing
+    For testing purposes
+Getting info on a specific user
+Login/logout functionality
+"""
+
 from django.test import TestCase
+from django.urls import reverse
+
+from rest_framework.test import APITestCase
+
 from .models import UserAPI
+
+
+class UserTests(APITestCase):
+    def setUp(self):
+        self.users = [
+            {
+                "username": "Paul",
+                "email": "a@a.com",
+                "role": "user"
+            },
+            {
+                "username": "Alex",
+                "email": "b@b.com",
+                "role": "user"
+            },
+            {
+                "username": "Steve",
+                "email": "c@c.com",
+                "role": "user"
+            }
+        ]
+        for user in self.users:
+            UserAPI.objects.create_user(**user).save()
+
+    def test_list_users(self):
+        """
+        Send a request to get a usr list
+        Expect to receive the same user list as in the DB
+        """
+        url = reverse('list_users')
+        res = self.client.get(url)
+        users = res.json()
+
+        # Users have ids
+        self.assertTrue(all(user.get('id') for user in users))
+
+        # User list reflects DB table
+        for user in users: user.pop('id')
+        self.assertEqual(users, res.json())
 
 
 class UserTest(TestCase):
