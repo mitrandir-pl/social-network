@@ -94,11 +94,11 @@ class UserTests(APITestCase, UserFixtures):
         """
         self.setup_user_list()
         url = reverse('get_user', kwargs={'pk': 1})
-        # self.setup_current_user()
         res = self.client.get(url)
         user = res.json()
-
-        breakpoint()
+        # User have id
+        self.assertTrue(user.pop('id'))
+        self.assertDictEqual(self.users[0], user)
 
     def test_user_login(self):
         """
@@ -112,7 +112,6 @@ class UserTests(APITestCase, UserFixtures):
             "password": self.user['password'],
         })
         self.assertEqual()
-
 
     def test_user_logout(self):
         """
