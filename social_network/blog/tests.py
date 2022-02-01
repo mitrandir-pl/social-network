@@ -24,7 +24,6 @@ class NewsFixtures:
         UserAPI.objects.create_user(**self.author).save()
 
     def setup_news_list(self):
-        self.setup_author()
         author = UserAPI.objects.get(pk=1)
         self.news = [
             {
@@ -49,36 +48,42 @@ class NewsFixtures:
 
 class NewsTest(APITestCase, NewsFixtures):
 
+    def setup_access_token(self):
+        """
+        Making a login to get an access token
+        """
+        self.setup_author()
+        url = reverse('token_obtain_pair')
+        response = self.client.post(url, {
+            "username": self.author['username'],
+            "password": self.author['password'],
+        })
+        self.access_token = response.json()['access']
+
     def test_list_news(self):
         """
         Send a request to get a news list
         Expect to receive the same news list as in the DB
         """
-        self.setup_news_list()  # database
+        self.setup_author()
+        self.setup_news_list()
         url = reverse('news_list')
-        res = self.client.get(url)
-        news = res.json()
+        response = self.client.get(url)
+        news = response.json()
 
         # News have ids
         self.assertTrue(all(post.pop('id') for post in news))
 
         # News list reflects DB table
-        self.assertEqual(news, res.json())
+        self.assertEqual(self.news[0]['title'], news[0]['title'])
+        self.assertEqual(self.news[0]['content'], news[0]['content'])
 
     def test_creation_post(self):
         """
         Creating a new post
         Expecting that it returns status201
         """
-
-        # Making a login to get an access token to create a post
-        self.setup_author()
-        url = reverse('token_obtain_pair')
-        res = self.client.post(url, {
-            "username": self.author['username'],
-            "password": self.author['password'],
-        })
-        access_token = res.json()['access']
+        self.setup_access_token()
 
         # Creating a post and making a request
         author = UserAPI.objects.get(pk=1)
@@ -88,23 +93,22 @@ class NewsTest(APITestCase, NewsFixtures):
             'content': 'test',
         }
         url = reverse('create_post')
-        res = self.client.post(
-            url,
-            data=post,
-            HTTP_AUTHORIZATION=f'JWT {access_token}'
+        response = self.client.post(
+            url, post, HTTP_AUTHORIZATION=f'JWT {self.access_token}'
         )
 
         # Check if the status is correct
-        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_get_post_by_id(self):
         """
         Get info on post by its ID
         """
+        self.setup_author()
         self.setup_news_list()
         url = reverse('news_detail', kwargs={'pk': 1})
-        res = self.client.get(url)
-        post = res.json()
+        response = self.client.get(url)
+        post = response.json()
 
         # Post has id
         self.assertTrue(post.pop('id'))
@@ -118,26 +122,22 @@ class NewsTest(APITestCase, NewsFixtures):
         """
         Get posts by the author name
         """
-
-        # Making a login to get an access token to create a post
-        url = reverse('token_obtain_pair')
-        self.setup_news_list()  # database
-        res = self.client.post(url, {
-            "username": self.author['username'],
-            "password": self.author['password'],
-        })
-        access_token = res.json()['access']
+        self.setup_access_token()
+        self.setup_news_list()
 
         url = reverse('news_by_name')
         request_name = {'author': self.author['username']}
-        res = self.client.post(url, request_name,
-                               HTTP_AUTHORIZATION=f'JWT {access_token}')
+        response = self.client.post(
+            url, request_name,
+            HTTP_AUTHORIZATION=f'JWT {self.access_token}'
+        )
+        news = response.json()
 
         # Check if all user's news are returned
-        self.assertEqual(len(res.json()), 3)
+        self.assertEqual(len(news), 3)
 
         # Check if all posts have the same author
         author_name = self.author['username']
         self.assertTrue(
-            all(author_name == post['author'] for post in res.json())
+            all(author_name == post['author'] for post in news)
         )

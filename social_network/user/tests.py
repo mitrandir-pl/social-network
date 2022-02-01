@@ -53,14 +53,14 @@ class UserTests(APITestCase, UserFixtures):
         """
         self.setup_user_list()  # database
         url = reverse('list_users')
-        res = self.client.get(url)
-        users = res.json()
+        response = self.client.get(url)
+        users = response.json()
 
         # Users have ids
         self.assertTrue(all(user.pop('id') for user in users))
 
         # User list reflects DB table
-        self.assertEqual(users, res.json())
+        self.assertEqual(self.users, users)
 
     def test_register_user(self):
         """
@@ -74,10 +74,10 @@ class UserTests(APITestCase, UserFixtures):
             "password": "123",
         }
         url = reverse('register')
-        res = self.client.post(url, user, format='json')
-        new_user = res.json()
+        response = self.client.post(url, user, format='json')
+        new_user = response.json()
 
-        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(new_user.pop('id'))
         self.assertTrue(new_user.pop('role'))
 
@@ -90,8 +90,8 @@ class UserTests(APITestCase, UserFixtures):
         """
         self.setup_user_list()
         url = reverse('get_user', kwargs={'pk': 1})
-        res = self.client.get(url)
-        user = res.json()
+        response = self.client.get(url)
+        user = response.json()
 
         # User have id
         self.assertTrue(user.pop('id'))
@@ -105,11 +105,11 @@ class UserTests(APITestCase, UserFixtures):
         """
         self.setup_user_login()
         url = reverse('token_obtain_pair')
-        res = self.client.post(url, {
+        response = self.client.post(url, {
             "username": self.user['username'],
             "password": self.user['password'],
         })
-        self.assertEqual({'access', 'refresh'}, res.json().keys())
+        self.assertEqual({'access', 'refresh'}, response.json().keys())
 
     def test_user_logout(self):
         """
