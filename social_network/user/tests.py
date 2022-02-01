@@ -3,20 +3,18 @@ Let's interact with the users.
 Allows for user creation (registration)
 User listing
     For testing purposes
-Getting info on a specific user
+Getting info on a specific user by ID
 Login/logout functionality
 """
-from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
-
-
 from rest_framework.test import APITestCase
 
 from .models import UserAPI
 
 
 class UserFixtures:
+
     def setup_user_list(self):
         self.users = [
             {
@@ -59,11 +57,9 @@ class UserTests(APITestCase, UserFixtures):
         users = res.json()
 
         # Users have ids
-        self.assertTrue(all(user.get('id') for user in users))
+        self.assertTrue(all(user.pop('id') for user in users))
 
         # User list reflects DB table
-        for user in users:
-            user.pop('id')
         self.assertEqual(users, res.json())
 
     def test_register_user(self):
@@ -96,8 +92,10 @@ class UserTests(APITestCase, UserFixtures):
         url = reverse('get_user', kwargs={'pk': 1})
         res = self.client.get(url)
         user = res.json()
+
         # User have id
         self.assertTrue(user.pop('id'))
+
         self.assertDictEqual(self.users[0], user)
 
     def test_user_login(self):

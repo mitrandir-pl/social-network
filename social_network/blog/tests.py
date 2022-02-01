@@ -1,86 +1,143 @@
-from django.test import TestCase
+"""
+Let's interact with the news.
+Allows for news creation.
+News listing
+    For testing purposes
+Getting info on a specific post by ID
+Getting info on a specific news by author
+"""
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APITestCase
 from user.models import UserAPI
-from .models import News, Comments
+from .models import News
 
 
-class NewsTest(TestCase):
-    """
-    Test case for news model and for comment model
+class NewsFixtures:
 
-    Creating two users
-    Creating two news (authors are users we created before)
-    Creating two comments (first user comments second news, second user comments first news)
-    Checking if news models have required fields: title, author, content
-    Checking if comments models have required fields: author, content, news_id
-    Checking if all these fields are correct
-    """
+    def setup_author(self):
+        self.author = {
+            "username": "rms",
+            "email": "rms@gnu.org",
+            "password": "qwerty12345"
+        }
+        UserAPI.objects.create_user(**self.author).save()
 
-    @classmethod
-    def setUpTestData(cls):
-        test_user1 = UserAPI.objects.create_user(
-            username="user1", email="a@a.com"
+    def setup_news_list(self):
+        self.setup_author()
+        author = UserAPI.objects.get(pk=1)
+        self.news = [
+            {
+                'title': 'new title1',
+                'author': author,
+                'content': 'this is the content!!!'
+            },
+            {
+                'title': 'new title2',
+                'author': author,
+                'content': 'this is more content!!!'
+            },
+            {
+                'title': 'new title3',
+                'author': author,
+                'content': 'this is more content!!!'
+            },
+        ]
+        for post in self.news:
+            News.objects.create(**post).save()
+
+
+class NewsTest(APITestCase, NewsFixtures):
+
+    def test_list_news(self):
+        """
+        Send a request to get a news list
+        Expect to receive the same news list as in the DB
+        """
+        self.setup_news_list()  # database
+        url = reverse('news_list')
+        res = self.client.get(url)
+        news = res.json()
+
+        # News have ids
+        self.assertTrue(all(post.pop('id') for post in news))
+
+        # News list reflects DB table
+        self.assertEqual(news, res.json())
+
+    def test_creation_post(self):
+        """
+        Creating a new post
+        Expecting that it returns status201
+        """
+
+        # Making a login to get an access token to create a post
+        self.setup_author()
+        url = reverse('token_obtain_pair')
+        res = self.client.post(url, {
+            "username": self.author['username'],
+            "password": self.author['password'],
+        })
+        access_token = res.json()['access']
+
+        # Creating a post and making a request
+        author = UserAPI.objects.get(pk=1)
+        post = {
+            'title': 'test',
+            'author': author,
+            'content': 'test',
+        }
+        url = reverse('create_post')
+        res = self.client.post(
+            url,
+            data=post,
+            HTTP_AUTHORIZATION=f'JWT {access_token}'
         )
-        test_user1.save()
 
-        test_user2 = UserAPI.objects.create_user(
-            username="user2", email="b@b.com"
-        )
-        test_user2.save()
-        test_news1 = News.objects.create(
-            title="new title1",
-            author=test_user1,
-            content="this is the content!!!"
-        )
-        test_news1.save()
-        test_news2 = News.objects.create(
-            title="new title2",
-            author=test_user2,
-            content="this is more content!!!"
-        )
-        test_news2.save()
-        test_comment1 = Comments.objects.create(
-            post=test_news2,
-            author=test_user1,
-            content="dummy comment num 1"
-        )
-        test_comment1.save()
-        test_comment2 = Comments.objects.create(
-            post=test_news1,
-            author=test_user2,
-            content="dummy comment num 2"
-        )
-        test_comment2.save()
+        # Check if the status is correct
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
 
-    def test_news(self):
-        news1 = News.objects.get(id=1)
-        news2 = News.objects.get(id=2)
-        title1 = f"{news1.title}"
-        title2 = f"{news2.title}"
-        user1 = UserAPI.objects.get(id=1)
-        user2 = UserAPI.objects.get(id=2)
-        author1 = news1.author
-        author2 = news2.author
-        content1 = f"{news1.content}"
-        content2 = f"{news2.content}"
-        self.assertEqual(title1, "new title1")
-        self.assertEqual(title2, "new title2")
-        self.assertEqual(content1, "this is the content!!!")
-        self.assertEqual(content2, "this is more content!!!")
-        self.assertEqual(user1, author1)
-        self.assertEqual(user2, author2)
+    def test_get_post_by_id(self):
+        """
+        Get info on post by its ID
+        """
+        self.setup_news_list()
+        url = reverse('news_detail', kwargs={'pk': 1})
+        res = self.client.get(url)
+        post = res.json()
 
-    def test_comments(self):
-        news1 = News.objects.get(id=1)
-        news2 = News.objects.get(id=2)
-        user1 = UserAPI.objects.get(id=1)
-        user2 = UserAPI.objects.get(id=2)
-        comment1 = Comments.objects.get(id=1)
-        comment2 = Comments.objects.get(id=2)
-        content1 = f"{comment1.content}"
-        content2 = f"{comment2.content}"
-        self.assertEqual(comment1.author, user1)
-        self.assertEqual(comment2.author, user2)
-        self.assertEqual(comment1.post, news2)
-        self.assertEqual(comment2.post, news1)
-        self.assertEqual(content1, "dummy comment num 1")
-        self.assertEqual(content2, "dummy comment num 2")
+        # Post has id
+        self.assertTrue(post.pop('id'))
+        # Post has time fields
+        self.assertTrue(post.pop('created'))
+
+        self.assertEqual(self.news[0]['title'], post['title'])
+        self.assertEqual(self.news[0]['content'], post['content'])
+
+    def test_get_news_by_username(self):
+        """
+        Get posts by the author name
+        """
+
+        # Making a login to get an access token to create a post
+        url = reverse('token_obtain_pair')
+        self.setup_news_list()  # database
+        res = self.client.post(url, {
+            "username": self.author['username'],
+            "password": self.author['password'],
+        })
+        access_token = res.json()['access']
+
+        url = reverse('news_by_name')
+        request_name = {'author': self.author['username']}
+        res = self.client.post(url, request_name,
+                               HTTP_AUTHORIZATION=f'JWT {access_token}')
+
+        # Check if all user's news are returned
+        self.assertEqual(len(res.json()), 3)
+
+        # Check if all posts have the same author
+        author_name = self.author['username']
+        self.assertTrue(
+            all(author_name == post['author'] for post in res.json())
+        )
