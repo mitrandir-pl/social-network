@@ -4,8 +4,8 @@ from blog.models import News
 
 
 class Comments(models.Model):
-    post = models.ForeignKey(News, on_delete=models.CASCADE, related_name='comments')
-    author = models.ForeignKey(UserAPI, on_delete=models.CASCADE)
+    post = models.ForeignKey(News, on_delete=models.CASCADE, related_name='comments', to_field='title')
+    author = models.ForeignKey(UserAPI, on_delete=models.CASCADE, to_field='username')
     content = models.CharField(max_length=255)
 
     def __str__(self):

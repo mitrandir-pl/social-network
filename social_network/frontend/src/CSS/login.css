@@ -1,0 +1,16 @@
+.container {
+    width: 450px;
+    height: 500px;
+    background-color: bisque;
+    margin: 250px auto;
+    text-align: center;
+}
+
+input[type="text"], input[type="email"], input[type="password"] {
+    width: 300px;
+    height: 50px;
+    font-size: 18px;
+    margin-bottom: 25px;
+    border-radius: 4px;
+    padding-left: 10px;
+}
