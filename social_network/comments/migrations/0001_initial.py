@@ -12,13 +12,10 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='News',
+            name='Comments',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=200, unique=True)),
-                ('image', models.ImageField(blank=True, null=True, upload_to='')),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('content', models.TextField()),
+                ('content', models.CharField(max_length=255)),
             ],
         ),
     ]
