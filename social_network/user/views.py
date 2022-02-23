@@ -7,16 +7,26 @@ from .serializers import UserAPISerializer
 
 
 class UserList(generics.ListAPIView):
+    """
+    Return a user list.
+    """
     queryset = UserAPI.objects.all()
     serializer_class = UserAPISerializer
 
 
 class UserDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Return current user by id.
+    """
     queryset = UserAPI.objects.all()
     serializer_class = UserAPISerializer
 
 
 class RegisterView(APIView):
+    """
+    Accepts username, email and password.
+    Create a new user.
+    """
     permission_classes = (permissions.AllowAny,)
     authentication_classes = ()
 

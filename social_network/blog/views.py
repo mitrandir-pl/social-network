@@ -7,16 +7,26 @@ from .models import News
 
 
 class NewsList(generics.ListAPIView):
+    """
+    Return news list.
+    """
     queryset = News.objects.all()
     serializer_class = NewsSerializer
 
 
 class NewsDetail(generics.RetrieveDestroyAPIView):
+    """
+    Return current post by  id.
+    """
     queryset = News.objects.all()
     serializer_class = NewsSerializer
 
 
 class CreateNews(APIView):
+    """
+    Accepts title and content.
+    Create a post.
+    """
 
     def post(self, request):
         serializer = NewsSerializer(data=request.data)
@@ -29,6 +39,9 @@ class CreateNews(APIView):
 
 
 class CurrentUserNews(APIView):
+    """
+    Accepts username and return all posts of this username.
+    """
 
     def post(self, request):
         author = request.data['author']

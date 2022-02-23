@@ -7,11 +7,17 @@ from .models import Comments
 
 
 class CommentsList(generics.ListAPIView):
+    """
+    Returns a comments list.
+    """
     queryset = Comments.objects.all()
     serializer_class = CommentsSerializer
 
 
 class CreateComment(APIView):
+    """
+    Accepts content and create a comment.
+    """
 
     def post(self, request):
         serializer = CommentsSerializer(data=request.data)
@@ -24,6 +30,9 @@ class CreateComment(APIView):
 
 
 class CommentsForCurrentPost(APIView):
+    """
+    Accepts post name and returns comments for this post.
+    """
 
     def post(self, request):
         post_ = request.data.get('post')
