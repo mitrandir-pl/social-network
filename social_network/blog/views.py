@@ -22,6 +22,15 @@ class NewsDetail(generics.RetrieveDestroyAPIView):
     serializer_class = NewsSerializer
 
 
+class NewsEdit(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Return current post by  id.
+    """#     serializer_class = NewsSerializer
+
+    queryset = News.objects.all()
+    serializer_class = NewsSerializer
+
+
 class CreateNews(APIView):
     """
     Accepts title and content.
